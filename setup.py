@@ -16,7 +16,10 @@ setup(
     #packages=[ 'esgf_download' ],
     scripts = [ 'scripts/esgf_add_downloads.py', 'scripts/esgf_fetch_downloads.py' ],
     package_data = { 'esgf_download': [ 'data/schema.sql' ] },
-    install_requires = [ 'requests', 'esgf-pyclient', 'lxml' ],
+    install_requires = [ 'requests',
+                         'esgf-pyclient',
+                         'MyProxyClient', #Actually required by esgf-pyclient
+                         'lxml' ],
     include_package_data=True,
     license='GPL-2.1',
     
