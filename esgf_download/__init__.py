@@ -391,8 +391,8 @@ class Downloader:
                         self.conn.execute('UPDATE transfert SET ' + ",".join([ x + " = ?" for x in update_fields.keys() ]) + ' WHERE transfert_id = ?', update_fields.values() + [transfert_id])
                         self.conn.commit()
                     except sqlite3.Error as se:
-                        if not stop_now:
-                            log.error("Error updating transfert table; shutting down.")
+                        if not self.stop_now:
+                            log.error("Error updating transfert table; shutting down. Do you have write permissions to the database?")
                             self.shutdown_now(None, None)
                             break
 
