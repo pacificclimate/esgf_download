@@ -656,7 +656,7 @@ def metadata_update(database_file,
         'location': 'location'}
 
     model_fetch_query = "SELECT name from model where name = ?"
-    model_insert_query = "INSERT INTO model({}) VALUES({}})".format(
+    model_insert_query = "INSERT INTO model({}) VALUES({})".format(
         ",".join(field_map_model.values()),
         ",".join(["?"] * len(field_map_model))
     )
