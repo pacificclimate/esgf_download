@@ -1,0 +1,4 @@
+requests
+esgf-pyclient
+MyProxyClient
+lxml
