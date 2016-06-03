@@ -4,7 +4,7 @@ import logging
 import sys
 import argparse
 
-from esgf_download import Downloader
+from esgf_download.downloader import Downloader
 
 def test_download():
     logging.basicConfig(stream=sys.stdout, level=4)
