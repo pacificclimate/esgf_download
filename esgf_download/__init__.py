@@ -23,8 +23,8 @@ import pyesgf
 from pyesgf.search import SearchConnection
 from pyesgf.logon import LogonManager
 import re
-## FIXME: Use hashlib
-import md5
+
+import hashlib
 from lxml import etree
 from pkg_resources import resource_stream
 
@@ -225,9 +225,10 @@ class DownloadThread:
         log.info("Initializing download of " + self.filename)
         self.mark_start_time()
 
-        if not (self.checksum_type == "MD5" or self.checksum_type == "md5"):
-            self.event_queue.put(("ERROR", self.transfert_id, "UNSUPPORTED_CHECKSUM_TYPE"))
-        data_md5sum = md5.new()
+        if self.checksum_type.lower() not in hashlib.algorithms:
+            self.mark_end_time()
+            self.event_queue.put(("ERROR", self.transfert_id, "UNSUPPORTED_CHECKSUM_TYPE: {}".format(self.checksum_type)))
+        data_hash = hashlib.new(self.checksum_type.lower())
 
         request_error = None
         try:
@@ -269,7 +270,7 @@ class DownloadThread:
                 self.add_perf_num((self.blocksize / 1024) / (this_time - last_time))
                 last_time = this_time
                 self.data_size += len(chunk)
-                data_md5sum.update(chunk)
+                data_hash.update(chunk)
                 if(self.abort):
                     raise Exception("Shutting down")
         except Exception as e:
@@ -285,7 +286,7 @@ class DownloadThread:
         self.writer.enqueue(fd, "", last=True)
         self.mark_end_time()
 
-        if data_md5sum.hexdigest() != self.checksum:
+        if data_hash.hexdigest() != self.checksum:
             os.unlink(self.filename)
             self.mark_end_time()
             self.event_queue.put(("ERROR", self.transfert_id, "CHECKSUM_MISMATCH_ERROR"))
