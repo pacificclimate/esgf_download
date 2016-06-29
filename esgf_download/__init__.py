@@ -185,19 +185,19 @@ class DownloadThread:
         self.download_thread.daemon = True
         self.download_thread.start()
 
-    def mark_start_time(self):
+    def _mark_start_time(self):
         '''
         Records the start time for the download. Internal.
         '''
         self.start_time = time.time()
 
-    def mark_end_time(self):
+    def _mark_end_time(self):
         '''
         Records the end time for the download. Internal.
         '''
         self.end_time = time.time()
 
-    def add_perf_num(self, kbps):
+    def _add_perf_num(self, kbps):
         '''
         Add a record to the running mean download speed record. Internal.
         :param kbps: The download speed for the last interval in kbps.
@@ -223,10 +223,10 @@ class DownloadThread:
         Routine which comprises the main download task. Spawned as a thread. Internal.
         '''
         log.info("Initializing download of " + self.filename)
-        self.mark_start_time()
+        self._mark_start_time()
 
         if self.checksum_type.lower() not in hashlib.algorithms:
-            self.mark_end_time()
+            self._mark_end_time()
             self.event_queue.put(("ERROR", self.transfert_id, "UNSUPPORTED_CHECKSUM_TYPE: {}".format(self.checksum_type)))
         data_hash = hashlib.new(self.checksum_type.lower())
 
@@ -234,7 +234,7 @@ class DownloadThread:
         try:
             res = get_request(self.session, self.url, stream=True)
         except Exception as e:
-            self.mark_end_time()
+            self._mark_end_time()
             self.event_queue.put(("ERROR", self.transfert_id, str(e)))
             return
         
@@ -252,7 +252,7 @@ class DownloadThread:
                 if not self.abort:
                     fd = open(self.filename, "wb+")
         except os.error as e: 
-            self.mark_end_time()
+            self._mark_end_time()
             self.event_queue.put(("ERROR", self.transfert_id, "FILE_CREATION_ERROR"))
             return
 
@@ -267,7 +267,7 @@ class DownloadThread:
                     "SPEED",
                     self.transfert_id,
                     len(chunk) / (1024.0 * (this_time - last_time))))
-                self.add_perf_num((self.blocksize / 1024) / (this_time - last_time))
+                self._add_perf_num((self.blocksize / 1024) / (this_time - last_time))
                 last_time = this_time
                 self.data_size += len(chunk)
                 data_hash.update(chunk)
@@ -278,17 +278,17 @@ class DownloadThread:
                 os.unlink(self.filename)
             except Exception as e:
                 pass
-            self.mark_end_time()
+            self._mark_end_time()
             self.event_queue.put(("ABORTED", self.transfert_id, 'Caught exception: ' + str(e)))
             return
 
         # Ensure the FD gets closed
         self.writer.enqueue(fd, "", last=True)
-        self.mark_end_time()
+        self._mark_end_time()
 
         if data_hash.hexdigest() != self.checksum:
             os.unlink(self.filename)
-            self.mark_end_time()
+            self._mark_end_time()
             self.event_queue.put(("ERROR", self.transfert_id, "CHECKSUM_MISMATCH_ERROR"))
             return
 
