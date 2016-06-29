@@ -59,6 +59,8 @@ cat esgf_download/data/schema.sql | sqlite3 db.sqlite
 
 ## Usage
 
+The included scripts have built-in help accessed with the `-h` option.
+
 ### Adding downloads
 
 ```bash
