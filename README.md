@@ -62,11 +62,13 @@ cat esgf_download/data/schema.sql | sqlite3 db.sqlite
 ### Adding downloads
 
 ```bash
-esgf_add_downloads.py -db db.sqlite -L debug -p CMIP5 -v taxmin -v tasmax -v pr -t day -x rcp26 -x rcp45 -x rcp60 -x rcp85 -x historical -x historicalMisc -x historicalGHG -x historicalExt -x historicalNat
+esgf_add_downloads.py -db db.sqlite -L debug -p CMIP5 -v tasmin -v tasmax -v pr -t day -x rcp26 -x rcp45 -x rcp60 -x rcp85 -x historical -x historicalMisc -x historicalGHG -x historicalExt -x historicalNat
 ```
+
+Search terms are passed directly as contraints to [pyesgf.search.SearchContext](http://esgf-pyclient.readthedocs.io/en/latest/search_api.html#module-pyesgf.search.context)
 
 ### Fetching downloads
 
 ```bash
-esgf_fetch_downloads.py -db db.sqlite -L debug -o <output_dir>
+esgf_fetch_downloads.py -db db.sqlite -L debug -o <output_dir> -u <username> -p <password> -a <auth_node>
 ```
