@@ -74,3 +74,29 @@ Search terms are passed directly as contraints to [pyesgf.search.SearchContext](
 ```bash
 esgf_fetch_downloads.py -db db.sqlite -L debug -o <output_dir> -u <username> -p <password> -a <auth_node>
 ```
+
+### Aggregating the downloads
+
+Downloaded files are typically split across time with each file consisting of a temporal subset. For local storage it is ideal to concatanate them together for one file per model run. Use the `aggregate_and_rename.r` script accomplish this.
+
+The file aggregation system takes the downloaded tree and aggregates files as necessary to produce a tree containing single files which include all of the data available for a particular variable-model-emissions-run-version combination. This code is to be run within R. The functions of interest are:
+
+* `get.file.metadata.cmip5`: Retrieves metadata for a filesystem tree, for use with the other functions mentioned.
+* `aggregate.cmip5`: Aggregates (as needed) files described within the retrieved metadata, producing single files containing all of the data for a combination as defined above.
+* `create.cmip5.symlink.tree`: Creates a symlink tree linking only to the aggregate files.
+
+The sequence is typically:
+
+* Get file metadata.
+* Aggregate data.
+* Get file metadata on new tree.
+* Create symlink tree.
+
+```R
+> meta <- get.file.metadata.cmip5('/datasets/climate-CMIP5/nobackup/CMIP5/output1')
+> agg_res <- aggregate.cmip5(meta)
+> meta_after_agg <- get.file.metadata.cmip5('/datasets/climate-CMIP5/nobackup/CMIP5/output1/')
+> create.cmip5.symlink.tree(meta_after_agg, '/home/data/projects/rat/test_cmip5_data')
+```
+
+If errors happen midway through aggregation, any partially created files must be cleaned up, `get.file.metadata` ran again, and the aggregation done using the new metadata result.
