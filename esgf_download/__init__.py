@@ -618,6 +618,7 @@ def metadata_update(database_file,
     '''
 
     db_exists = os.path.isfile(database_file)
+    log.info('Using database %s' % database_file)
 
     conn = sqlite3.connect(database_file)
 
@@ -630,12 +631,9 @@ def metadata_update(database_file,
 
     curse = conn.cursor()
 
-    # Turn on debugging, for great justice.
-    logging.basicConfig(level='DEBUG', stream=sys.stdout)
-    
     search_conn = SearchConnection(search_host, distrib=True)
     ## Need to turn on WAL: http://www.sqlite.org/draft/wal.html
-    ctx = pyesgf.search.SearchContext(search_conn, constraints, replica=False, search_type=pyesgf.search.TYPE_DATASET)
+    ctx = pyesgf.search.SearchContext(search_conn, constraints, replica=True, search_type=pyesgf.search.TYPE_DATASET)
 
     field_map_model = {
         'data_node': 'datanode',
