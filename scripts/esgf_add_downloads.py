@@ -44,7 +44,7 @@ if __name__ == '__main__':
     # ESGF Update Metadata Options
     g1 = parser.add_argument_group('ESGF Update Options')
     g1.add_argument('-s', '--search-host',
-                       default='http://pcmdi9.llnl.gov/esg-search/search',
+                       default='http://pcmdi.llnl.gov/esg-search',
                        help="Search host")
     g1.add_argument('-p', '--project',
                        required=True,

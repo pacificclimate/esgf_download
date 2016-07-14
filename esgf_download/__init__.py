@@ -605,7 +605,7 @@ def get_property_dict(xml_tree,
 # TODO: Fetch multiple XML files at once.
 # Try using select()?
 def metadata_update(database_file,
-                    search_host="http://pcmdi11.llnl.gov/esg-search/search",
+                    search_host="http://pcmdi.llnl.gov/esg-search",
                     **constraints):
     '''
     Queries the ESGF server for a set of datasets, queries each THREDDS
