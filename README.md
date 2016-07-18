@@ -77,6 +77,8 @@ esgf_fetch_downloads.py -db db.sqlite -L debug -o <output_dir> -u <username> -p 
 
 ### Aggregating the downloads
 
+*Requires ncrcat to be available in your PATH*
+
 Downloaded files are typically split across time with each file consisting of a temporal subset. For local storage it is ideal to concatanate them together for one file per model run. Use the `aggregate_and_rename.r` script accomplish this.
 
 The file aggregation system takes the downloaded tree and aggregates files as necessary to produce a tree containing single files which include all of the data available for a particular variable-model-emissions-run-version combination. This code is to be run within R. The functions of interest are:
@@ -99,4 +101,4 @@ The sequence is typically:
 > create.cmip5.symlink.tree(meta_after_agg, '/home/data/projects/rat/test_cmip5_data')
 ```
 
-If errors happen midway through aggregation, any partially created files must be cleaned up, `get.file.metadata` ran again, and the aggregation done using the new metadata result.
+If errors happen midway through aggregation, any partially created files must be cleaned up (something like `find <dir> -mtime -1 -type f`), `get.file.metadata` ran again, and the aggregation done using the new metadata result.
